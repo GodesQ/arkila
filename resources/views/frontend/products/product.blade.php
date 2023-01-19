@@ -7,7 +7,7 @@
             </script>
         @endpush
     @endif
-    
+
     @if ($errors->any())
         @foreach ($errors->all() as $error)
             @push('scripts')
@@ -61,7 +61,23 @@
                         </div>
                         <div class="col-lg-6 rtl-text">
                             <div class="product-right">
-                                <h2>{{ $product->product_name }}</h2>
+                                <h2 style="margin: 0;">{{ $product->product_name }}</h2>
+                                @if($product->rate)
+                                    <a href="#review-list">
+                                        <span style="color: #ffc72d; font-size: 20px;">{{ number_format($product->rate, 1) }}</span>
+                                        @for ($i = 0; $i < round($product->rate); $i++)
+                                            <span style="color: #ffc72d; font-size: 25px;">&#9733;</span>
+                                        @endfor
+                                        <span style="margin-left: 7px;">{{ $product->total_reviews }} Reviews</span>
+                                    </a>
+                                @else
+                                    <a href="#review-list">
+                                        @for ($i = 0; $i < 5; $i++)
+                                            <span style="color: #ffc72d; font-size: 25px;">&#9734;</span>
+                                        @endfor
+                                        <span style="margin-left: 7px;">{{ $product->total_reviews }} Reviews</span>
+                                    </a>
+                                @endif
                                 <h3 class="price-detail">&#8369 <span class="total_display_amount" style="color: #000; font-size: 25px;">{{ number_format($product->amount, 2) }}</span></h3>
                                 <h4 class="price-detail">Stock: {{ $product->stock }}</h4>
                                 <h6 class="product-title">quantity</h6>
@@ -70,7 +86,7 @@
                                         <span class="input-group-prepend">
                                             <button type="button" class="btn" onclick="setMinusQuantity()">
                                                 <i class="fa fa-minus"></i>
-                                            </button> 
+                                            </button>
                                         </span>
                                         <input type="number" readonly name="quantity" class="form-control input-number" value="{{ $cart ? $cart->quantity : 1 }}" max="{{ $product->stock }}">
                                         <span class="input-group-prepend">
@@ -95,7 +111,7 @@
                                     <input type="hidden" value="{{ $cart ? $cart->amount : null }}" name="amount">
                                     <input type="hidden" name="total_dates" value="{{ $cart ? $cart->total_date : null }}">
                                     @if($product->stock > 0)
-                                        @if($cart) 
+                                        @if($cart)
                                             <button type="submit" id="cartEffect" class="btn btn-solid hover-solid btn-animation">
                                                 <i class="fa fa-shopping-cart me-1" aria-hidden="true"></i> Update In Cart
                                             </button>
@@ -120,7 +136,7 @@
     <!-- Section ends -->
 
     <!-- product-tab starts -->
-    <section class="tab-product pt-0 my-3">
+    <section class="tab-product pt-0 my-3" id="review-list">
         <div class="container">
             <div class="row">
                 <div class="col-sm-12 col-lg-12">
@@ -133,7 +149,7 @@
                     </ul>
                     <div class="tab-content nav-material" id="top-tabContent">
                         <div class="tab-pane active p-1" id="top-review" role="tabpanel" aria-labelledby="review-top-tab">
-                            @if(count($product->reviews) > 0) 
+                            @if(count($product->reviews) > 0)
                                 <div class="d-flex justify-content-end align-items-start my-2">
                                     <a href="/store/reviews/{{ $product->id }}">See all Reviews <i class="fa fa-arrow-right"></i></a>
                                 </div>
@@ -177,7 +193,7 @@
     <script>
         const inputNumber = document.querySelector('.input-number');
         function setAddQuantity(stock) {
-            if (Number(inputNumber.value) < stock) return inputNumber.value = Number(inputNumber.value) + 1;   
+            if (Number(inputNumber.value) < stock) return inputNumber.value = Number(inputNumber.value) + 1;
         }
         function setMinusQuantity() {
             if(inputNumber.value > 1) return inputNumber.value = Number(inputNumber.value) - 1;
@@ -207,7 +223,7 @@
                 $(rate).append(`<li style="font-size: 20px; color: rgb(255, 166, 0)">&#9733;</li>`);
             })
        })
-    
+
         $(function() {
                 const disabledArr = [];
                 $.ajax({
@@ -220,16 +236,16 @@
                         responses.forEach(response => {
                             let dates = getDateArray(new Date(response.start_date), new Date(response.end_date));
                             dates.forEach(date => {
-                                let formatedDate = setFormatDate(date); 
+                                let formatedDate = setFormatDate(date);
                                 disabledArr.push(formatedDate);
                             })
                         });
                     }
                 })
-                
+
                 let startDate = $('input[name="start_date"]').val() ? setFormatDate(new Date( $('input[name="start_date"]').val())) : null;
                 let endDate = $('input[name="end_date"]').val() ? setFormatDate(new Date($('input[name="end_date"]').val())) : null;
-    
+
                 $('input[name="daterange"]').daterangepicker({
                     autoUpdateInput: false,
                     minDate: new Date(),
@@ -249,14 +265,14 @@
                             thisDate = "0"+thisDate; // Leading 0
                         }
                         var thisYear = arg._d.getYear()+1900;   // Years are 1900 based
-        
+
                         var thisCompare = thisMonth +"/"+ thisDate +"/"+ thisYear;
                         if($.inArray(thisCompare,disabledArr)!= -1){
                             return true;
                         }
                     }
                 }).val(startDate && endDate ? startDate + ' - ' + endDate : '');
-            
+
             $('input[name="daterange"]').on('apply.daterangepicker', function(ev, picker) {
                 $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
                 $('input[name="start_date"]').val(picker.startDate.format('MM/DD/YYYY'));
@@ -267,13 +283,13 @@
                 let total = Number('{{ $product->amount }}') * Number(totalLengthOfDates.length);
                 $('input[name="amount"]').val(total.toFixed(2));
             });
-            
+
             $('input[name="daterange"]').on('cancel.daterangepicker', function(ev, picker) {
                 $(this).val('');
                 $('input[name="start_date"]').val('');
                 $('input[name="end_date"]').val('');
             });
-    
+
             const getDateArray = (start_date, end_date) => {
                 var arr = [];
                 while (start_date <= end_date) {
@@ -282,7 +298,7 @@
                 }
                 return arr;
             }
-    
+
             function setFormatDate(format_date) {
                 const t = new Date(format_date);
                 const date = ('0' + t.getDate()).slice(-2);
@@ -292,7 +308,7 @@
                 return fullDate;
             }
         });
-      
+
     </script>
 @endpush
 

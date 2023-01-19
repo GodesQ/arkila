@@ -61,6 +61,9 @@
         <!-- Theme css -->
         <link rel="stylesheet" type="text/css" href="{{ URL::asset('assets/css/style.css') }}" />
 
+        <!-- Price range icon -->
+        <link rel="stylesheet" type="text/css" href="{{ URL::asset('assets/css/vendors/price-range.css') }}">
+
         <!-- Animate icon -->
         <link rel="stylesheet" type="text/css" href="{{ URL::asset('assets/css/vendors/animate.css') }}" />
 
@@ -366,6 +369,12 @@
 
         <!-- Sidebar jquery-->
         <script src="{{ url('assets/js/sidebar-menu.js') }}"></script>
+
+        <!-- menu js-->
+        <script src="{{ url('assets/js/menu.js') }}"></script>
+
+        <!-- price range js -->
+        <script src="{{ url('assets/js/price-range.js') }}"></script>
 
         <!--chartist js-->
         <script src="{{ url('assets/js/chart/chartist/chartist.js') }}"></script>
