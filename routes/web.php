@@ -32,6 +32,7 @@ use App\Http\Controllers\WebController\CustomerReviewController;
 
 
 Route::get('/', [StoreController::class, 'index']);
+Route::get('/fetch_products', [StoreController::class, 'fetch_products']);
 
 /*
 * Authentication
@@ -109,30 +110,30 @@ Route::middleware([AdminAuthenticate::class])->group( function () {
     Route::post('/update_customer', [CustomerController::class, 'update'])->name('customer.update');
     Route::get('/destroy_customer/{id}', [CustomerController::class, 'destroy'])->name('customer.destroy');
     Route::get('/search_customer', [CustomerController::class, 'search']);
-    
+
     Route::get('/carts', [CartController::class, 'index']);
     Route::get('/table_carts', [CartController::class, 'table']);
     Route::get('/create_cart', [CartController::class, 'create'])->name('cart.create');
     Route::post('/store_cart', [CartController::class, 'store'])->middleware('customerCheck')->name('cart.store');
     Route::get('/edit_cart/{id}', [CartController::class, 'edit'])->name('cart.edit');
     Route::post('/update_cart', [CartController::class, 'update'])->name('cart.update');
-    Route::get('/destroy_cart/{id}', [CartController::class, 'destroy'])->name('cart.destroy'); 
-    
+    Route::get('/destroy_cart/{id}', [CartController::class, 'destroy'])->name('cart.destroy');
+
     Route::get('/admins', [AdminController::class, 'index']);
     Route::get('/table_admins', [AdminController::class, 'table']);
     Route::get('/create_admin', [AdminController::class, 'create'])->name('admin.create');
     Route::post('/store_admin', [AdminController::class, 'store'])->name('admin.store');
     Route::get('/edit_admin/{id}', [AdminController::class, 'edit'])->name('admin.edit');
     Route::post('/update_admin', [AdminController::class, 'update'])->name('admin.update');
-    Route::delete('/destroy_admin', [AdminController::class, 'destroy'])->name('admin.destroy'); 
+    Route::delete('/destroy_admin', [AdminController::class, 'destroy'])->name('admin.destroy');
 
     Route::get('/checkouts', [CheckoutController::class, 'index']);
     Route::get('/table_checkouts', [CheckoutController::class, 'table']);
     Route::get('/checkout_customer_review/{id}', [CheckoutController::class, 'add_checkout_customer_review']);
     Route::post('/store_customer_review', [CustomerReviewController::class, 'store_checkout_customer_review']);
     Route::get('/checkout/{id}', [CheckoutController::class, 'show']);
-    // Route::get('/destroy_checkouts/{id}', [CheckoutController::class, 'destroy'])->name('cart.destroy'); 
-    
+    // Route::get('/destroy_checkouts/{id}', [CheckoutController::class, 'destroy'])->name('cart.destroy');
+
     Route::get('/vendor/profile', [VendorController::class, 'profile'])->name('vendor.profile');
 });
 
@@ -156,10 +157,10 @@ Route::middleware([CustomerAuthenticate::class])->group( function () {
     Route::get('/store/update_checkout_status', [StoreController::class, 'update_checkout_status']);
     Route::get('/store/disabled_dates', [StoreController::class, 'get_disabled_dates']);
     Route::post('/store/store_checkout', [CheckoutController::class, 'store_checkout']);
-    
+
     Route::get('/store/return_checkout', [StoreController::class, 'return_checkout']);
     Route::post('/store/return_checkout', [StoreController::class, 'post_checkout']);
-    
+
     Route::get('/store/write_review/{id}', [ProductReviewController::class, 'write_review']);
     Route::post('/store/store_review', [ProductReviewController::class, 'store_review']);
 });

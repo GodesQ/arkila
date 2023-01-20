@@ -36,10 +36,10 @@ class CheckoutController extends Controller
 
         return Datatables::of($data)
                     ->addColumn('product_image', function($row) {
-                        return '<img height="60" width="60" src="../../../assets/images/products/'. $row->product->product_image .'" >';
+                        return '<img height="60" width="60" src="../../../assets/images/products/'. optional($row->product)->product_image .'" >';
                     })
                     ->addColumn('product_name', function($row) {
-                        return substr($row->product->product_name, 0, 10) . "...";
+                        return substr(optional($row->product)->product_name, 0, 10) . "...";
                     })
                     ->addColumn('customer', function($row){
                         return $row->customer->firstname . " " . $row->customer->lastname;
@@ -57,17 +57,17 @@ class CheckoutController extends Controller
                     })
                     ->rawColumns(['product_image', 'action', 'review_btn'])
                     ->toJson();
-        
+
     }
 
     public function store_checkout(Request $request)
-    {   
+    {
         $request->validate([
             'customer_id' => 'required',
             'vendor_id' => 'required',
             'product_id' => 'required',
             'cart_id' => 'required',
-            'total' => 'required', 
+            'total' => 'required',
             'quantity' => 'required',
             'payment_type' => 'required',
             'firstname' => 'required',
@@ -80,7 +80,7 @@ class CheckoutController extends Controller
             'end_date' => 'required',
             'total_dates' => 'required',
         ]);
-        
+
         $txnid = rand(100000, 100000000);
         $save = Checkout::create([
             'customer_id' => $request->customer_id,
@@ -88,7 +88,7 @@ class CheckoutController extends Controller
             'product_id' => $request->product_id,
             'cart_id' => $request->cart_id,
             'txnid' => $txnid,
-            'total' => floatval($request->total), 
+            'total' => floatval($request->total),
             'quantity' => $request->quantity,
             'payment_type' => $request->payment_type,
             'firstname' => $request->firstname,
@@ -110,11 +110,11 @@ class CheckoutController extends Controller
 
         $parameters = [
             'txnid' => $txnid,
-            'amount' => floatval($request->total), 
-            'ccy' => 'PHP', 
-            'description' => 'Product ' . $request->product_name, 
-            'email' => $request->email, 
-            'param1' => $save->id, 
+            'amount' => floatval($request->total),
+            'ccy' => 'PHP',
+            'description' => 'Product ' . $request->product_name,
+            'email' => $request->email,
+            'param1' => $save->id,
             'BillingDetails' => [
                 "FirstName" => $request->firstname,
                 "LastName" => $request->lastname,
@@ -163,14 +163,14 @@ class CheckoutController extends Controller
                             ->setChannelId('default');
                         if($vendor->device_token) $expo->send($message)->to($vendor->device_token)->push();
                     }
-                    
+
                     $data = [
                         'txnid' => $txnid,
                         'refno' => bin2hex($bytes)
                     ];
-                    
+
                     return view('frontend.checkout.success_checkout', compact('data'));
-                    
+
                 case 'BC':
                     $dragonpay->setParameters($parameters)->withProcid(Processor::BITCOIN)->away();
                     break;
@@ -185,13 +185,13 @@ class CheckoutController extends Controller
                     break;
                  case 'GCASH':
                     $dragonpay->setParameters($parameters)->withProcid(Processor::GCASH)->away();
-                    break;  
+                    break;
                 case 'BOGUS_BANK':
                     $dragonpay->setParameters($parameters)->withProcid('BOGX')->away();
-                    break;  
+                    break;
                 case 'BOG':
                     $dragonpay->setParameters($parameters)->withProcid('BOG')->away();
-                    break;    
+                    break;
             }
         } catch(PaymentException $e){
             echo $e->getMessage();

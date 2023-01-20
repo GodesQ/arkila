@@ -26,10 +26,39 @@ class StoreController extends Controller
 {
     //
     public function index() {
-
-        $products = Product::latest('id')->get();
+        // if($request->ajax()) {}
+        $products = Product::latest('id')->paginate(12);
         $categories = Category::all();
         return view('frontend.index', compact('categories', 'products'));
+    }
+
+    public function fetch_products(Request $request) {
+        abort_if(!$request->ajax(), 404);
+
+        $categories = json_decode($request->categories) ? json_decode($request->categories) : [];
+        $keyword = $request->keyword;
+        $price = $request->price;
+
+        $products = Product::select('*')
+        ->when($categories, function ($q) use ($categories) {
+            if(count($categories)) return $q->whereIn('category_id', $categories);
+        })
+        ->when($price, function ($q) use ($price) {
+            $range = explode(';', $price);
+            return $q->whereBetween('amount', [$range[0], $range[1]]);
+        })
+        ->when($keyword, function ($q) use ($keyword) {
+            return $q->where(DB::raw('lower(product_name)'), 'like', '%' . strtolower($keyword) . '%')
+                    ->orWhere(DB::raw('lower(description)'), 'like', '%' . strtolower($keyword) . '%');
+        })
+        ->latest('id')
+        ->paginate(12);
+
+        $view_data = view('frontend.products.fetch_products', compact('products'))->render();
+
+        return response()->json([
+            'view_data' => $view_data,
+        ]);
     }
 
     public function categories(Request $request) {

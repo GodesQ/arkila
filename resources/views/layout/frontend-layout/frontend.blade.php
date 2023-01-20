@@ -62,7 +62,7 @@
         <link rel="stylesheet" type="text/css" href="{{ URL::asset('assets/css/style.css') }}" />
 
         <!-- Price range icon -->
-        <link rel="stylesheet" type="text/css" href="{{ URL::asset('assets/css/vendors/price-range.css') }}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.1/css/ion.rangeSlider.min.css"/>
 
         <!-- Animate icon -->
         <link rel="stylesheet" type="text/css" href="{{ URL::asset('assets/css/vendors/animate.css') }}" />
@@ -373,17 +373,14 @@
         <!-- menu js-->
         <script src="{{ url('assets/js/menu.js') }}"></script>
 
-        <!-- price range js -->
-        <script src="{{ url('assets/js/price-range.js') }}"></script>
+        <!-- lazyload js-->
+        <script src="{{ url('assets/js/lazysizes.min.js') }}"></script>
 
         <!--chartist js-->
         <script src="{{ url('assets/js/chart/chartist/chartist.js') }}"></script>
 
         <!--chartjs js-->
         <script src="{{ url('assets/js/chart/chartjs/chart.min.js') }}"></script>
-
-        <!-- lazyload js-->
-        <script src="{{ url('assets/js/lazysizes.min.js') }}"></script>
 
         <!--copycode js-->
         <script src="{{ url('assets/js/prism/prism.min.js') }}"></script>

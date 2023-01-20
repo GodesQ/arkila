@@ -8,13 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class Product extends Model
 {
     use HasFactory;
+
     protected $table = 'products';
     protected $fillable = ['product_name', 'product_image', 'stock', 'category_id', 'vendor_id', 'amount', 'description'];
 
-    protected $appends = [
-        'rate' => 'integer',
-        'total_reviews' => 'integer'
-    ];
+    protected $appends = ['rate'];
 
     public function carts() {
         return $this->belongsTo(Cart::class);
@@ -55,11 +53,21 @@ class Product extends Model
         $average = $sum_rate == 0 ? 0 : $sum_rate / $total_of_reviews;
 
         $total_average = number_format($average, 1);
-        return (float) number_format($total_average, 1);
+        if($total_average) {
+            return (float) number_format($total_average, 1);
+        } else {
+            return 0;
+        }
+
     }
 
     public function total_reviews() {
         $total_of_reviews = ProductReview::where('product_id', $this->id)->count();
-        return $total_of_reviews;
+        if($total_of_reviews) {
+            return $total_of_reviews;
+        } else {
+            return 0;
+        }
+
     }
 }

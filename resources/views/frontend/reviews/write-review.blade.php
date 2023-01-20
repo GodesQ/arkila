@@ -15,6 +15,13 @@
         font-size: 35px;
         cursor: pointer;
     }
+    .item-status {
+        cursor: pointer;
+        padding: 0.4rem 1rem;
+        background: transparent;
+        border: 1px solid black;
+        border-radius: 10px;
+    }
 </style>
 
 @if ($errors->any())
@@ -55,23 +62,12 @@
                                 <input type="hidden" name="checkout_id" value="{{ $item->id }}">
                                 <div class="form-group">
                                     <label for="">Review</label>
-                                    <textarea
-                                        name="review"
-                                        id=""
-                                        cols="5"
-                                        rows="5"
-                                        class="form-control"
-                                    ></textarea>
+                                    <textarea name="review" id="" cols="5" rows="5"class="form-control"></textarea>
                                     <span class="danger text-danger">@error('review'){{$message}}@enderror</span>
                                 </div>
                                 <div class="form-group">
                                     <label for="">Review Image</label>
-                                    <input
-                                        type="file"
-                                        name="review_image"
-                                        class="form-control"
-                                        id=""
-                                    />
+                                    <input type="file" name="review_image" class="form-control" id="" />
                                 </div>
                                 <div class="form-group mt-3">
                                     <h4 for="">Rate Product</h4>
@@ -113,7 +109,7 @@
                                 <div class="form-footer">
                                     <button class="btn btn-primary">Submit</button>
                                 </div>
-                            </form> 
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -140,8 +136,8 @@
             });
         }
 
-    }); 
-    
+    });
+
     let lender_stars = document.querySelectorAll('.lender-star');
     let lender_rate = document.querySelector('#lender_rate');
     let currentActiveLenderStar = 0;
@@ -158,7 +154,7 @@
             });
         }
 
-    }); 
+    });
 
 </script>
 @endsection
