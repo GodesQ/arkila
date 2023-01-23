@@ -143,25 +143,29 @@ class CheckoutController extends Controller
                     $expo = Expo::driver('file');
                     $bytes = random_bytes(10);
                     if($vendorLoginAuth) {
-                        $message = (new ExpoMessage([
-                        'title' => 'New Order',
-                        'body' => 'Your Product has new order',
-                        ]))
-                            ->setTitle('New Order')
-                            ->setBody($fullname . ' purchase ' . $request->product_name)
-                            ->setData(['id' => $vendor->id, 'isLogin' => true])
-                            ->setChannelId('default');
-                        $response = $expo->send($message)->to($vendor->device_token)->push();
+                        if($vendor->device_token) {
+                            $message = (new ExpoMessage([
+                                'title' => 'New Order',
+                                'body' => 'Your Product has new order',
+                                ]))
+                                ->setTitle('New Order')
+                                ->setBody($fullname . ' purchase ' . $request->product_name)
+                                ->setData(['id' => $vendor->id, 'isLogin' => true])
+                                ->setChannelId('default');
+                            $response = $expo->send($message)->to($vendor->device_token)->push();
+                        }
                     } else {
-                        $message = (new ExpoMessage([
-                        'title' => $request->title,
-                        'body' => $request->body,
-                        ]))
-                            ->setTitle('New Order')
-                            ->setBody($fullname . ' purchase ' . $request->product_name . ". " . 'Login Now.')
-                            ->setData(['id' => $vendor->id, 'isLogin' => false])
-                            ->setChannelId('default');
-                        if($vendor->device_token) $expo->send($message)->to($vendor->device_token)->push();
+                        if($vendor->device_token) {
+                            $message = (new ExpoMessage([
+                            'title' => $request->title,
+                            'body' => $request->body,
+                            ]))
+                                ->setTitle('New Order')
+                                ->setBody($fullname . ' purchase ' . $request->product_name . ". " . 'Login Now.')
+                                ->setData(['id' => $vendor->id, 'isLogin' => false])
+                                ->setChannelId('default');
+                            if($vendor->device_token) $expo->send($message)->to($vendor->device_token)->push();
+                        }
                     }
 
                     $data = [
@@ -198,7 +202,6 @@ class CheckoutController extends Controller
         } catch(\Exception $e){
             echo $e->getMessage();
         }
-
     }
 
     public function show(Request $request) {

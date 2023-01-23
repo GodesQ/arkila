@@ -85,6 +85,10 @@ class StoreController extends Controller
         return view('frontend.checkout.checkout-detail', compact('checkout'));
     }
 
+    public function checkout_extend(Request $request) {
+
+    }
+
     public function get_disabled_dates(Request $request) {
         $checkouts = Checkout::where('product_id', $request->product_id)->get();
         $disabledDates = [];
@@ -184,10 +188,10 @@ class StoreController extends Controller
         $data = Checkout::select('*')->where('customer_id', session()->get('id'))->where('isCancel', '=', 0)->latest('id')->with('product');
         return Datatables::of($data)
                     ->addColumn('product_image', function($row) {
-                        return '<img height="60" width="60" src="../../../assets/images/products/'. $row->product->product_image .'" >';
+                        return '<img height="60" width="60" src="../../../assets/images/products/'. optional($row->product)->product_image .'" >';
                     })
                     ->addColumn('product_name', function($row) {
-                        return substr($row->product->product_name, 0, 10) . "...";
+                        return substr(optional($row->product)->product_name, 0, 10) . "...";
                     })
                     ->addColumn('action', function($row){
                            $btn = '<a href="/store/checkout_detail/' . $row->id . '" class="edit btn btn-primary btn-sm"><i class="fa fa-eye"></i></a>';
