@@ -142,6 +142,7 @@ class CheckoutController extends Controller
                     $fullname = $request->firstname . ' ' . $request->lastname;
                     $expo = Expo::driver('file');
                     $bytes = random_bytes(10);
+
                     if($vendorLoginAuth) {
                         if($vendor->device_token) {
                             $message = (new ExpoMessage([

@@ -47,7 +47,7 @@ class CustomerController extends Controller
             'username' => 'required',
             'password' => 'required',
             'email' => 'required|unique:customer',
-            'confirm_password' => 'required_with:password|same:password'  
+            'confirm_password' => 'required_with:password|same:password'
         ]);
 
         if($request->hasFile('customer_image')) {
@@ -100,12 +100,12 @@ class CustomerController extends Controller
             'address' => 'required',
             'customer_image' => 'required|mimes:jpeg,jpg,png',
             'username' => 'required',
-            'email' => 'required', 
+            'email' => 'required',
         ]);
 
         $customer = Customer::where('id', $request->id)->first();
         $image_name = $request->old_image;
-        
+
         if(isset($request->customer_image)) {
             //remove first the old image
             $image = public_path('/assets/images/customers/') . $request->old_image;
