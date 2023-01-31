@@ -19,7 +19,7 @@
                     <a href="/store/update_checkout_status?id={{ $checkout->id }}&status=RETURNED"
                         class="edit btn btn-success">ORDER RETURNED</a>
                     @if ($checkout->IsAvailableExtensionDate())
-                        <a href="#" class="edit btn btn-secondary">EXTEND ITEM</a>
+                        <a href="/store/checkout_extend/{{ $checkout->id }}" class="edit btn btn-secondary">EXTEND ITEM</a>
                     @else
                         <a href="javascript:void(0);" class="edit btn btn-secondary disabled">Extend Item is not
                             available</a>

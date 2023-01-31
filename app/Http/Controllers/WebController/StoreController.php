@@ -85,7 +85,7 @@ class StoreController extends Controller
         return view('frontend.checkout.checkout-detail', compact('checkout'));
     }
 
-    public function checkout_extend(Request $request) {
+    public function checkout_extend(Request $request, Checkout $checkout) {
 
     }
 

@@ -22,12 +22,12 @@
                                 @forelse($carts as $cart)
                                 <tr>
                                     <td>
-                                        <a href="/store/product/{{ $cart->product->id }}">
-                                            <img src="{{ url('assets/images/products/' . $cart->product->product_image ) }}"alt="" />
+                                        <a href="/store/product/{{ optional($cart->product)->id }}">
+                                            <img src="{{ url('assets/images/products/' . optional($cart->product)->product_image ) }}"alt="" />
                                         </a>
                                     </td>
                                     <td>
-                                        <a href="/store/product/{{ $cart->product->id }}">{{ $cart->product->product_name }}</a>
+                                        <a href="/store/product/{{ optional($cart->product)->id }}">{{ optional($cart->product)->product_name }}</a>
                                         <div class="mobile-cart-content row">
                                             <div class="col">
                                                 <div class="qty-box">
@@ -43,7 +43,7 @@
                                                 </div>
                                             </div>
                                             <div class="col">
-                                                <h2 class="td-color">{{ $cart->product->amount }}</h2>
+                                                <h2 class="td-color">{{ optional($cart->product)->amount }}</h2>
                                             </div>
                                             <div class="col">
                                                 <h2 class="td-color">
@@ -55,16 +55,16 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <h2>&#8369 {{ number_format($cart->product->amount, 2) }}</h2>
+                                        <h2>&#8369 {{ number_format(optional($cart->product)->amount, 2) }}</h2>
                                     </td>
                                     <td>
                                         <div class="qty-box">
                                             <div class="input-group">
                                                 <input
-                                                    oninput="updateCartQuantity(this, '{{ $cart->product->amount }}', {{ $cart->total_date }})"
+                                                    oninput="updateCartQuantity(this, '{{ optional($cart->product)->amount }}', {{ $cart->total_date }})"
                                                     type="number"
                                                     id="{{ $cart->id }}"
-                                                    min="1" max="{{ $cart->product->stock }}"
+                                                    min="1" max="{{ optional($cart->product)->stock }}"
                                                     name="quantity"
                                                     class="form-control input-number"
                                                     value="{{ $cart->quantity }}"
@@ -81,16 +81,16 @@
                                         <h2 class="td-color">&#8369 <span class="total">{{ number_format($cart->amount, 2) }}</span></h2>
                                     </td>
                                     <td>
-                                        @if($cart->product->stock == 0 || $cart->quantity > $cart->product->stock) 
+                                        @if(optional($cart->product)->stock == 0 || $cart->quantity > optional($cart->product)->stock)
                                             <a href="#" class="text-white btn btn-sm" style="background-color: gray;">OUT OF STOCK</a>
                                         @else
                                             <a href="/store/checkout/{{ $cart->id }}" class="text-white btn btn-sm btn-primary ">BORROW</a>
                                         @endif
-                                        
+
                                         <a href="/destroy_cart/{{ $cart->id }}" class="text-white btn btn-sm btn-danger"><i class="fa fa-trash"></i></a>
                                     </td>
                                 </tr>
-                                @empty 
+                                @empty
                                 <tr>
                                     <td colspan="7">No Items</td>
                                 </tr>
@@ -129,12 +129,12 @@
                         if(response.status == 200) {
                             let total = $(e).parent().parent().parent().parent().children()[5];
                             console.log(total);
-                            $(total).html(`<h2 class="td-color">&#8369 <span class="total">${Number(response.total).toFixed(2)}</span></h2>`);   
+                            $(total).html(`<h2 class="td-color">&#8369 <span class="total">${Number(response.total).toFixed(2)}</span></h2>`);
                         } else {
                             toastr.warning(`${response.message}`, 'Fail');
                         }
                     }
-                });   
+                });
             }
         }
     </script>
