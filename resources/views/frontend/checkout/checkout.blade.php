@@ -124,7 +124,7 @@
                                         <ul class="qty">
                                             <li>
                                                 {{ $item->product->product_name }} x {{ $item->quantity }}
-                                                <span>&#8369 {{ number_format($item->product->amount, 2) }}</span>
+                                                <span>₱ {{ number_format($item->product->amount, 2) }}</span>
                                             </li>
                                             <li>
                                                 Total Rental Date :
@@ -135,13 +135,13 @@
                                             </li>
                                             <li>
                                                 Sub Total :
-                                                <span>&#8369 {{ number_format($item->amount, 2) }}</span>
+                                                <span>₱ {{ number_format($item->amount, 2) }}</span>
                                             </li>
                                         </ul>
                                         <ul class="total">
                                             <li>
                                                 Total
-                                                <span class="count">&#8369 {{ number_format($item->amount, 2) }}</span>
+                                                <span class="count">₱ {{ number_format($item->amount, 2) }}</span>
                                             </li>
                                         </ul>
                                     </div>
@@ -278,13 +278,13 @@
                 responses.forEach(response => {
                     let dates = getDateArray(new Date(response.start_date), new Date(response.end_date));
                     dates.forEach(date => {
-                        let formatedDate = setFormatDate(date); 
+                        let formatedDate = setFormatDate(date);
                         disabledArr.push(formatedDate);
                     })
                 });
             }
         })
-        
+
         let startDate = setFormatDate(new Date( $('input[name="start_date"]').val()));
         let endDate = setFormatDate(new Date($('input[name="end_date"]').val()));
 
@@ -314,7 +314,7 @@
                 }
             }
         }).val(startDate + " - " + endDate);
-        
+
         $('input[name="daterange"]').on('apply.daterangepicker', function(ev, picker) {
             $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
             $('input[name="start_date"]').val(picker.startDate.format('MM/DD/YYYY'));
@@ -326,7 +326,7 @@
             $('input[name="total"]').val(total.toFixed(2));
             $('.count').text('P ' + total.toFixed(2));
         });
-        
+
         $('input[name="daterange"]').on('cancel.daterangepicker', function(ev, picker) {
             $(this).val('');
             $('input[name="start_date"]').val('');
@@ -351,7 +351,7 @@
             return fullDate;
         }
 
-    
+
     });
 </script>
 @endpush

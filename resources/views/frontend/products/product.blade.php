@@ -77,7 +77,7 @@
                                             <span style="margin-left: 7px;">{{ $product->total_reviews }} Reviews</span>
                                         </a>
                                     @endif
-                                    <h3 class="price-detail">&#8369 <span class="total_display_amount"
+                                    <h3 class="price-detail">₱ <span class="total_display_amount"
                                             style="color: #000; font-size: 25px;">{{ number_format($product->amount, 2) }}</span>
                                     </h3>
                                     <h4 class="price-detail">Stock: {{ $product->stock }}</h4>

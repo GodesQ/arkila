@@ -85,7 +85,7 @@
                                     </div>
                                     <div class="col-md-6">
                                         <h4>Total</h4>
-                                        <h6>&#8369 {{ number_format($checkout->total, 2) }}</h6>
+                                        <h6>₱ {{ number_format($checkout->total, 2) }}</h6>
                                     </div>
                                     <div class="col-md-6">
                                         <h4>Quantity</h4>
@@ -135,7 +135,7 @@
                                 <div class="row">
                                     <div class="col-md-12">
                                         <h4>Sub Total</h4>
-                                        <h6>&#8369 {{ number_format($checkout->product->amount, 2) }}</h6>
+                                        <h6>₱ {{ number_format($checkout->product->amount, 2) }}</h6>
                                     </div>
                                     <div class="col-md-12">
                                         <h4>Quantity</h4>
@@ -148,7 +148,7 @@
                                     <hr>
                                     <div class="col-md-12">
                                         <h4 class="text-primary">Total</h4>
-                                        <h6 style="font-weight: 800; color: #000; font-size: 20px;">&#8369
+                                        <h6 style="font-weight: 800; color: #000; font-size: 20px;">₱
                                             {{ number_format($checkout->total, 2) }}</h6>
                                     </div>
                                 </div>

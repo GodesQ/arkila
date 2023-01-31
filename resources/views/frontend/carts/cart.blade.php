@@ -55,7 +55,7 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <h2>&#8369 {{ number_format(optional($cart->product)->amount, 2) }}</h2>
+                                        <h2>₱ {{ number_format(optional($cart->product)->amount, 2) }}</h2>
                                     </td>
                                     <td>
                                         <div class="qty-box">
@@ -78,7 +78,7 @@
                                         </h3>
                                     </td>
                                     <td>
-                                        <h2 class="td-color">&#8369 <span class="total">{{ number_format($cart->amount, 2) }}</span></h2>
+                                        <h2 class="td-color">₱ <span class="total">{{ number_format($cart->amount, 2) }}</span></h2>
                                     </td>
                                     <td>
                                         @if(optional($cart->product)->stock == 0 || $cart->quantity > optional($cart->product)->stock)
@@ -86,7 +86,6 @@
                                         @else
                                             <a href="/store/checkout/{{ $cart->id }}" class="text-white btn btn-sm btn-primary ">BORROW</a>
                                         @endif
-
                                         <a href="/destroy_cart/{{ $cart->id }}" class="text-white btn btn-sm btn-danger"><i class="fa fa-trash"></i></a>
                                     </td>
                                 </tr>
@@ -129,7 +128,7 @@
                         if(response.status == 200) {
                             let total = $(e).parent().parent().parent().parent().children()[5];
                             console.log(total);
-                            $(total).html(`<h2 class="td-color">&#8369 <span class="total">${Number(response.total).toFixed(2)}</span></h2>`);
+                            $(total).html(`<h2 class="td-color">₱ <span class="total">${Number(response.total).toFixed(2)}</span></h2>`);
                         } else {
                             toastr.warning(`${response.message}`, 'Fail');
                         }

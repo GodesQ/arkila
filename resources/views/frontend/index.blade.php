@@ -122,7 +122,7 @@
                                             @endfor
                                         @endif
                                     </div>
-                                    <h5 class="text-primary px-1">&#8369 {{ number_format($product->amount, 0) }}</h5>
+                                    <h5 class="text-primary px-1">₱ {{ number_format($product->amount, 0) }}</h5>
                                 </div>
                             </a>
                         </div>

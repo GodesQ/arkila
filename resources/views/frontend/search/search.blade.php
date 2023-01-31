@@ -58,7 +58,7 @@
                                             <div class="font-bold my-1 px-1 product-text">
                                                 {{ strlen($product->product_name) > 35 ? substr($product->product_name, 0, 35) . "..." : $product->product_name }}
                                             </div>
-                                            <h5 class="text-primary px-1">&#8369 {{ number_format($product->amount, 0) }}</h5>
+                                            <h5 class="text-primary px-1">₱ {{ number_format($product->amount, 0) }}</h5>
                                         </div>
                                     </a>
                                 </div>
