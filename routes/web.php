@@ -155,6 +155,7 @@ Route::middleware([CustomerAuthenticate::class])->group( function () {
     Route::get('/store/checkout/{id}', [StoreController::class, 'checkout']);
     Route::get('/store/checkout_detail/{id}', [StoreController::class, 'checkout_detail']);
     Route::get('/store/checkout_extend/{checkout}', [StoreController::class, 'checkout_extend']);
+    Route::get('/store/checkout_extend', [CheckoutController::class, 'store_checkout_extend']);
     Route::get('/store/update_checkout_status', [StoreController::class, 'update_checkout_status']);
     Route::get('/store/disabled_dates', [StoreController::class, 'get_disabled_dates']);
     Route::post('/store/store_checkout', [CheckoutController::class, 'store_checkout']);

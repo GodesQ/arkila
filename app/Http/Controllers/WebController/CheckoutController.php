@@ -97,12 +97,23 @@ class CheckoutController extends Controller
             'zip_code' => $request->zip_code,
             'email' => $request->email,
             'contactno' => $request->contactno,
-            'status' => 'PENDING',
+            'status' => $request->checkout_type == 'extend' ? 'DELIVERED' : 'PENDING',
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,
             'total_date' => $request->total_dates,
-            'isCancel' => $request->payment_type == 'COD' ? 0 : 1
+            'isCancel' => $request->payment_type == 'COD' ? 0 : 1,
+            'checkout_type' => $request->checkout_type,
         ]);
+
+        $main_id = $request->main_id ? $request->main_id : null;
+
+        if($main_id) {
+            $checkout_exist = Checkout::where('id', $main_id)->first();
+            $update_checkout = Checkout::where('id', $main_id)->update([
+                'extends_checkout_id' => $checkout_exist->id,
+                'status' => $request->payment_type == 'COD' ? 'EXTENDED' : $checkout_exist->status,
+            ]);
+        }
 
         // $product = Product::where('id', $request->product_id)->first();
         // $product->stock = $product->stock - 1;

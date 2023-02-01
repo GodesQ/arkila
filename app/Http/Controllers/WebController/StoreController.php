@@ -89,7 +89,8 @@ class StoreController extends Controller
     }
 
     public function checkout_extend(Request $request, Checkout $checkout) {
-
+        $nearest_checkout = Checkout::whereRaw('start_date > ?', [$checkout->end_date])->where('product_id', $checkout->product_id)->first();
+        return view('frontend.checkout.checkout-extend', compact('checkout', 'nearest_checkout'));
     }
 
     public function get_disabled_dates(Request $request) {
@@ -212,7 +213,9 @@ class StoreController extends Controller
                             }
                         } else if($row->status == 'RETURNED') {
                             $btn = '<a href="/store/write_review/'.$row->id.'" class="edit btn btn-secondary btn-sm" style="font-size: 12px; padding: 10px;">RATE ORDER</a>';
-                        } else {
+                        } else if($row->status == 'EXTENDED') {
+                            $btn = 'Product checkout has extend';
+                        }  else {
                             $btn = 'Product has already been rated.';
                         }
                          return $btn;

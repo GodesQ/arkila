@@ -16,7 +16,7 @@
                     <a href="/store/update_checkout_status?id={{ $checkout->id }}&status=DELIVERED"
                         class="edit btn btn-primary">ORDER RECEIVED</a>
                 @elseif($checkout->status == 'DELIVERED')
-                    @if($checkout->end_date > date('Y-m-d'))
+                    @if(new DateTime($checkout->start_date) > date('Y-m-d') && date('Y-m-d') < new DateTime($checkout->end_date) )
                         <a href="/store/update_checkout_status?id={{ $checkout->id }}&status=RETURNED"
                         class="edit btn btn-success">ORDER RETURNED</a>
                     @else

@@ -1,4 +1,4 @@
- @extends('layout.frontend-layout.frontend') @section('content')
+@extends('layout.frontend-layout.frontend') @section('content')
 <div class="page-body">
     <!-- section start -->
     <section class="section-b-space">
@@ -38,7 +38,7 @@
                                         <input
                                             type="text"
                                             name="firstname"
-                                            value="{{ $item->customer->firstname }}"
+                                            value="{{ $checkout->customer->firstname }}"
                                             placeholder=""
                                         />
                                     </div>
@@ -49,7 +49,7 @@
                                         <input
                                             type="text"
                                             name="lastname"
-                                            value="{{ $item->customer->lastname }}"
+                                            value="{{ $checkout->customer->lastname }}"
                                             placeholder=""
                                         />
                                     </div>
@@ -60,7 +60,7 @@
                                         <input
                                             type="text"
                                             name="contactno"
-                                            value="{{ $item->customer->contact_no }}"
+                                            value="{{ $checkout->customer->contact_no }}"
                                             placeholder=""
                                         />
                                     </div>
@@ -73,7 +73,7 @@
                                         <input
                                             type="text"
                                             name="email"
-                                            value="{{ $item->customer->email }}"
+                                            value="{{ $checkout->customer->email }}"
                                             placeholder=""
                                         />
                                     </div>
@@ -84,7 +84,7 @@
                                         <input
                                             type="text"
                                             name="address"
-                                            value="{{ $item->customer->address }}"
+                                            value="{{ $checkout->customer->address }}"
                                             placeholder=""
                                         />
                                     </div>
@@ -104,12 +104,19 @@
                                     <div
                                         class="form-group col-md-12 col-sm-6 col-xs-12"
                                     >
+                                        @php
+                                            $start_date = new DateTime($checkout->end_date);
+                                            $start_date->modify('+1 day');
+
+                                            $end_date = new DateTime($nearest_checkout->start_date);
+                                            $end_date->modify('-1 day');
+                                        @endphp
                                         <div class="field-label">
                                             Borrow Duration
                                         </div>
                                         <input type="text" readonly name="daterange" value="" />
-                                        <input type="hidden" name="start_date" value="{{ $item->start_date }}">
-                                        <input type="hidden" name="end_date" value="{{ $item->end_date }}">
+                                        <input type="hidden" name="start_date" value="{{ $start_date->format('Y-m-d') }}">
+                                        <input type="hidden" name="end_date" value="{{ $end_date->format('Y-m-d') }}">
                                     </div>
                                 </div>
                             </div>
@@ -123,25 +130,25 @@
                                         </div>
                                         <ul class="qty">
                                             <li>
-                                                {{ $item->product->product_name }} x {{ $item->quantity }}
-                                                <span>₱ {{ number_format($item->product->amount, 2) }}</span>
+                                                {{ $checkout->product->product_name }} x {{ $checkout->quantity }}
+                                                <span>₱ {{ number_format($checkout->product->amount, 2) }}</span>
                                             </li>
                                             <li>
                                                 Total Rental Date :
                                                 <span id="total_dates">
-                                                   x {{ $item->total_date }}
+                                                   x
                                                 </span>
-                                                <input type="hidden" name="total_dates" value="{{ $item->total_date }}">
+                                                <input type="hidden" name="total_dates" value="">
                                             </li>
                                             <li>
                                                 Sub Total :
-                                                <span>₱ {{ number_format($item->amount, 2) }}</span>
+                                                <span>₱ {{ number_format($checkout->total, 2) }}</span>
                                             </li>
                                         </ul>
                                         <ul class="total">
                                             <li>
                                                 Total
-                                                <span class="count">₱ {{ number_format($item->amount, 2) }}</span>
+                                                <span class="count">₱ {{ number_format($checkout->amount, 2) }}</span>
                                             </li>
                                         </ul>
                                     </div>
@@ -242,14 +249,15 @@
                                             </div>
                                         </div>
                                         <div class="text-end">
-                                            <input type="hidden" value="normal" name="checkout_type">
-                                            <input type="hidden" value="{{ $item->amount }}" name="total">
-                                            <input type="hidden" value="{{ $item->product->product_name }}" name="product_name">
-                                            <input type="hidden" value="{{ $item->quantity }}" name="quantity">
-                                            <input type="hidden" value="{{ $item->id }}" name="cart_id">
-                                            <input type="hidden" value="{{ $item->product->id }}" name="product_id">
-                                            <input type="hidden" value="{{ $item->customer->id }}" name="customer_id">
-                                            <input type="hidden" value="{{ $item->product->vendor_id }}" name="vendor_id">
+                                            <input type="hidden" value="{{ $checkout->id }}" name="main_id">
+                                            <input type="hidden" value="extend" name="checkout_type">
+                                            <input type="hidden" value="{{ $checkout->amount }}" name="total">
+                                            <input type="hidden" value="{{ $checkout->product->product_name }}" name="product_name">
+                                            <input type="hidden" value="{{ $checkout->quantity }}" name="quantity">
+                                            <input type="hidden" value="{{ $checkout->id }}" name="cart_id">
+                                            <input type="hidden" value="{{ $checkout->product->id }}" name="product_id">
+                                            <input type="hidden" value="{{ $checkout->customer->id }}" name="customer_id">
+                                            <input type="hidden" value="{{ $checkout->product->vendor_id }}" name="vendor_id">
                                             <button class="btn-solid btn">Submit Borrow Request</button>
                                         </div>
                                     </div>
@@ -273,7 +281,7 @@
             url: '/store/disabled_dates',
             method: 'GET',
             data: {
-                product_id: '{{ $item->product->id }}',
+                product_id: '{{ $checkout->product->id }}',
             },
             success: function(responses) {
                 responses.forEach(response => {
@@ -290,7 +298,8 @@
         let endDate = setFormatDate(new Date($('input[name="end_date"]').val()));
 
         $('input[name="daterange"]').daterangepicker({
-            minDate: new Date(),
+            minDate: startDate,
+            maxDate: endDate,
             startDate: startDate, // after open picker you'll see this dates as picked
             endDate: endDate,
             autoUpdateInput: false,
@@ -323,7 +332,7 @@
             let totalLengthOfDates = getDateArray(new Date(picker.startDate.format('MM/DD/YYYY')), new Date(picker.endDate.format('MM/DD/YYYY')));
             $('input[name="total_dates"]').val(totalLengthOfDates.length);
             $('#total_dates').text('x' + totalLengthOfDates.length);
-            let total = Number('{{ $item->amount }}') * Number(totalLengthOfDates.length);
+            let total = Number('{{ $checkout->total }}') * Number(totalLengthOfDates.length);
             $('input[name="total"]').val(total.toFixed(2));
             $('.count').text('P ' + total.toFixed(2));
         });
