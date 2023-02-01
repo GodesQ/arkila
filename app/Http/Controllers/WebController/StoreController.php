@@ -205,8 +205,9 @@ class StoreController extends Controller
                         if($row->status == "PENDING") {
                             $btn = '<a href="/store/update_checkout_status?id='.$row->id.'&status=DELIVERED" class="edit btn btn-primary btn-sm" style="font-size: 12px; padding: 5px;">ORDER RECEIVED</a>';
                         } else if($row->status == "DELIVERED") {
-                            $end_date = $row->end_date;
-                            if($end_date < Carbon::now()) {
+                            $end_date = new \DateTime($row->end_date);
+                            $start_date = new \DateTime($row->start_date);
+                            if($end_date < Carbon::now() && $start_date > Carbon::now()) {
                                 $btn = '<a href="/store/pay_penalty/'. $row->id .'" class="edit btn btn-success btn-sm" style="font-size: 12px; padding: 10px;">PAY PENALTY</a>';
                             } else {
                                 $btn = '<a href="/store/update_checkout_status?id='.$row->id.'&status=RETURNED" class="edit btn btn-success btn-sm" style="font-size: 12px; padding: 10px;">ORDER RETURNED</a>';
