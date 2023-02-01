@@ -16,9 +16,13 @@
                     <a href="/store/update_checkout_status?id={{ $checkout->id }}&status=DELIVERED"
                         class="edit btn btn-primary">ORDER RECEIVED</a>
                 @elseif($checkout->status == 'DELIVERED')
-                    <a href="/store/update_checkout_status?id={{ $checkout->id }}&status=RETURNED"
+                    @if($checkout->end_date > date('Y-m-d'))
+                        <a href="/store/update_checkout_status?id={{ $checkout->id }}&status=RETURNED"
                         class="edit btn btn-success">ORDER RETURNED</a>
-                    @if ($checkout->IsAvailableExtensionDate())
+                    @else
+                        <a href="/store/pay_penalty/{{ $checkout->id }}" class="edit btn btn-success btn-sm" style="font-size: 12px; padding: 10px;">PAY PENALTY</a>
+                    @endif
+                    @if ($checkout->IsAvailableExtensionDate() && $checkout->end_date > \Carbon\Carbon::now())
                         <a href="/store/checkout_extend/{{ $checkout->id }}" class="edit btn btn-secondary">EXTEND ITEM</a>
                     @else
                         <a href="javascript:void(0);" class="edit btn btn-secondary disabled">Extend Item is not

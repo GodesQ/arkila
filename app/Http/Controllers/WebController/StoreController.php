@@ -15,12 +15,15 @@ use App\Models\VendorReview;
 use App\Models\Transaction;
 use App\Models\Vendor;
 use App\Models\ProductReview;
+use App\Models\Penalty;
 
 use Yajra\DataTables\Facades\DataTables;
 
 use Crazymeeks\Foundation\PaymentGateway\Dragonpay;
 use Crazymeeks\Foundation\PaymentGateway\Options\Processor;
 use Crazymeeks\Foundation\PaymentGateway\Dragonpay\Token;
+
+use Carbon\Carbon;
 
 class StoreController extends Controller
 {
@@ -201,7 +204,12 @@ class StoreController extends Controller
                         if($row->status == "PENDING") {
                             $btn = '<a href="/store/update_checkout_status?id='.$row->id.'&status=DELIVERED" class="edit btn btn-primary btn-sm" style="font-size: 12px; padding: 5px;">ORDER RECEIVED</a>';
                         } else if($row->status == "DELIVERED") {
-                            $btn = '<a href="/store/update_checkout_status?id='.$row->id.'&status=RETURNED" class="edit btn btn-success btn-sm" style="font-size: 12px; padding: 10px;">ORDER RETURNED</a>';
+                            $end_date = $row->end_date;
+                            if($end_date < Carbon::now()) {
+                                $btn = '<a href="/store/pay_penalty/'. $row->id .'" class="edit btn btn-success btn-sm" style="font-size: 12px; padding: 10px;">PAY PENALTY</a>';
+                            } else {
+                                $btn = '<a href="/store/update_checkout_status?id='.$row->id.'&status=RETURNED" class="edit btn btn-success btn-sm" style="font-size: 12px; padding: 10px;">ORDER RETURNED</a>';
+                            }
                         } else if($row->status == 'RETURNED') {
                             $btn = '<a href="/store/write_review/'.$row->id.'" class="edit btn btn-secondary btn-sm" style="font-size: 12px; padding: 10px;">RATE ORDER</a>';
                         } else {
@@ -311,6 +319,101 @@ class StoreController extends Controller
         $redirect_url = '/store/checkout_detail/' . $checkout->id;
 
         if($update) return redirect($redirect_url)->with('success', 'Update Status Successfully');
+    }
+
+    public function pay_penalty(Request $request) {
+        $checkout = Checkout::where('id', $request->id)->first();
+        return view('frontend.checkout.pay_penalty', compact('checkout'));
+    }
+
+    public function submit_pay_penalty(Request $request) {
+        $request->validate([
+            'penalty_days' => 'numeric|required',
+            'total' => 'required|numeric',
+            'payment_type' => 'required'
+        ]);
+
+        $txnid = rand(100000, 100000000);
+        $checkout = Checkout::where('id', $request->checkout_id)->with('product', 'customer', 'vendor')->firstOrFail();
+
+        $penalty = Penalty::create([
+            'checkout_id' => $request->checkout_id,
+            'penalty_days' => $request->penalty_days,
+            'total' => $request->total,
+            'status' => 'pending'
+        ]);
+
+        $parameters = [
+            'txnid' => $txnid,
+            'amount' => floatval($request->total),
+            'ccy' => 'PHP',
+            'description' => 'Pay Penalty for Product ' . $checkout->product->product_name,
+            'email' => $checkout->customer->email,
+            'param1' => $penalty->id,
+            'BillingDetails' => [
+                "FirstName" => $checkout->customer->firstname,
+                "LastName" => $checkout->customer->lastname,
+                "Address1" => $checkout->customer->address,
+                "TelNo" => $checkout->customer->contactno,
+                "Email" => $checkout->customer->email,
+            ]
+        ];
+
+        // Setup DragonPay Account
+        $merchant_account = [
+            'merchantid' => env('DRAGONPAY_ID'),
+            'password'   => env('DRAGONPAY_PASSWORD')
+        ];
+
+        // Initialize Dragonpay
+        $dragonpay = new Dragonpay($merchant_account);
+
+        try {
+            switch ($request->payment_type) {
+                case 'COR':
+                    $bytes = random_bytes(10);
+
+                    $penalty = Penalty::where('id', $penalty->id)->first();
+                    $penalty->status = 'success';
+                    $penalty->save();
+
+                    $checkout->status = 'RETURNED';
+                    $checkout->save();
+
+                    $data = [
+                        'txnid' => $txnid,
+                        'refno' => bin2hex(10)
+                    ];
+
+                    return view('frontend.checkout.success_checkout', compact('data'));
+
+                case 'BC':
+                    $dragonpay->setParameters($parameters)->withProcid(Processor::BITCOIN)->away();
+                    break;
+                case 'PAYPAL':
+                    $dragonpay->setParameters($parameters)->withProcid(Processor::PAYPAL)->away();
+                    break;
+                case 'CC':
+                    $dragonpay->setParameters($parameters)->withProcid(Processor::CREDIT_CARD)->away();
+                    break;
+                case 'DP_CREDITS':
+                    $dragonpay->setParameters($parameters)->withProcid(Processor::DRAGONPAY_PREPARED_CREDITS)->away();
+                    break;
+                 case 'GCASH':
+                    $dragonpay->setParameters($parameters)->withProcid(Processor::GCASH)->away();
+                    break;
+                case 'BOGUS_BANK':
+                    $dragonpay->setParameters($parameters)->withProcid('BOGX')->away();
+                    break;
+                case 'BOG':
+                    $dragonpay->setParameters($parameters)->withProcid('BOG')->away();
+                    break;
+            }
+        } catch(PaymentException $e){
+           dd($e);
+        } catch(\Exception $e){
+           dd($e);
+        }
     }
 
     public function verify_message(Request $request) {

@@ -158,6 +158,8 @@ Route::middleware([CustomerAuthenticate::class])->group( function () {
     Route::get('/store/update_checkout_status', [StoreController::class, 'update_checkout_status']);
     Route::get('/store/disabled_dates', [StoreController::class, 'get_disabled_dates']);
     Route::post('/store/store_checkout', [CheckoutController::class, 'store_checkout']);
+    Route::get('/store/pay_penalty/{id}', [StoreController::class, 'pay_penalty'])->name('store.pay_penalty');
+    Route::post('/store/pay_penalty', [StoreController::class, 'submit_pay_penalty'])->name('store.submit_pay_penalty');
 
     Route::get('/store/return_checkout', [StoreController::class, 'return_checkout']);
     Route::post('/store/return_checkout', [StoreController::class, 'post_checkout']);
